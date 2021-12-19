@@ -347,7 +347,7 @@ def playBackSong():
 
 
     # load Current playing List in Datbase#
-loadCurrentPlayList()
+#loadCurrentPlayList()
 
 
 
