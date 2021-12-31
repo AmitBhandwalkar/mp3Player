@@ -1,34 +1,30 @@
-from pygame import mixer
-import pygame  
-
- 
-
-         
-#   # Loading the song
+import sqlite3  
   
-#   # Start playing the song
-       
+conn = sqlite3.connect('play_list.db') 
 
-    
+print("Opened database successfully")
 
+# try:  
+#  conn.execute('''CREATE TABLE Songlist 
+#        (  playlist_name text,
+#           song_path text  
+#        );''')  
+#  print("Table created successfully")  
+# except sqlite3.OperationalError:
+#        print("Table are present")
 
+# conn.execute(""" INSERT INTO Songlist (playlist_name,song_path)  
+# VALUES ('fav-1','c/dsgd/dddhd')
+# """)
+# print("data insert")
 
-# for test
-if __name__ == "__main__":
-    playList = []
-    playList.append("Rome.mp3")
-    playList.append("Speakerbox.mp3")
+data = conn.execute("select * from Songlist");  
+for row in data:
+       print(row[0],row[1])
+      
 
-    pygame.mixer.init() 
-    pygame.mixer.music.load(playList[0])
-    pygame.mixer.music.play()
-    
+#Commit Changes
+conn.commit()
 
-    x = 1
-    while x != 3 :
-         if pygame.mixer.music.get_busy():
-           pass
-         else :
-           print("Song is finshed")
-           x = 3
-
+#Close Connection
+conn.close()

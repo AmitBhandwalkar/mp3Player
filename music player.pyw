@@ -32,8 +32,37 @@ next_song_index = None
 # load Current Play List
 def loadCurrentPlayList():
     #Create a database or connect to one
+    global  conn 
     conn = sqlite3.connect('play_list.db')
+    try:  
+       conn.execute('''CREATE TABLE Songlist 
+                (  playlist_name text,
+                   song_path text  
+                );''')  
+    #   print("Table created successfully")  
+    except sqlite3.OperationalError:
+    #   print("Table are present")
+       data = conn.execute("select * from Songlist WHERE playlist_name = 'play_list' ");  
+       for row in data:
+        song_file = row[1]
+        x = song_file.rfind('/')+1
+        song_name = song_file[x:len(song_file)]
+        song = Song(song_file,song_name)
+        play_list.append(song)
+        songs_listBox.insert(END,song_name)
 
+
+# add Song in database playlist
+def addSongsDatabase():
+ # delete old play list data
+  conn.execute("DELETE FROM Songlist WHERE playlist_name = 'play_list';"); 
+  for song in play_list:
+    querry = f"INSERT INTO Songlist (playlist_name,song_path)  VALUES ('play_list','{song.filepath}')"
+    conn.execute(querry)
+    #Commit Changes
+    conn.commit()             
+  
+  
 
 
          # functions for database opertions End #
@@ -343,14 +372,6 @@ def playBackSong():
 
 
 
-
-
-
-    # load Current playing List in Datbase#
-#loadCurrentPlayList()
-
-
-
 #creating window
 window = Tk()
 window.geometry('850x750')
@@ -495,9 +516,17 @@ volume_lable2.grid(row=0,column=6,padx=5)
 
 
 
+# load Current playing List in Datbase#
+loadCurrentPlayList()
 
        
        
 
        # main loop #
 window.mainloop()
+
+
+# add play list song in database
+addSongsDatabase()
+# Close databse Connection
+conn.close()
